@@ -1,7 +1,7 @@
+import React from "react";
+
 import { Outfit } from "next/font/google";
-import { Toaster } from "react-hot-toast";
-import StoreProvider from "../app/StoreProvider";
-import { SessionProvider } from "next-auth/react"; // <-- import SessionProvider
+import Providers from "./providers";
 import "./globals.css";
 
 const outfit = Outfit({ subsets: ["latin"], weight: ["400", "500", "600"] });
@@ -14,13 +14,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${outfit.className} antialiased`}>
-        <SessionProvider>
-          <StoreProvider>
-            <Toaster />
-            {children}
-          </StoreProvider>
-        </SessionProvider>
+      <body className={`${outfit.className} antialiased dark:bg-gray-900`}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

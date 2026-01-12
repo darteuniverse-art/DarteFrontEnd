@@ -60,7 +60,8 @@ export function LoginCard() {
               <div className="flex flex-col gap-1">
                 <label
                   htmlFor="email"
-                  className="text-gray-700 dark:text-gray-800">
+                  className="text-gray-700 dark:text-gray-800"
+                >
                   Email
                 </label>
                 <input
@@ -75,7 +76,8 @@ export function LoginCard() {
               <div className="flex flex-col gap-1">
                 <label
                   htmlFor="password"
-                  className="text-gray-700 dark:text-gray-800">
+                  className="text-gray-700 dark:text-gray-800"
+                >
                   Password
                 </label>
                 <input
@@ -89,7 +91,8 @@ export function LoginCard() {
 
               <button
                 type="submit"
-                className="w-full px-4 py-2 bg-gradient-to-r from-[#0545a5] to-[#5b1dcd] text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all mt-2">
+                className="w-full px-4 py-2 bg-gradient-to-r from-[#0545a5] to-[#5b1dcd] text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all mt-2"
+              >
                 Log in
               </button>
 
@@ -98,7 +101,8 @@ export function LoginCard() {
               <button
                 type="button"
                 onClick={handleGoogleLogin}
-                className="w-full px-4 py-2 border border-gray-300 flex items-center justify-center gap-2 rounded-md hover:bg-gray-200 dark:bg-gray-200 transition-colors">
+                className="w-full px-4 py-2 border border-gray-300 flex items-center justify-center gap-2 rounded-md hover:bg-gray-200 dark:bg-gray-200 transition-colors"
+              >
                 <FcGoogle className="w-5 h-5" />
                 Log in with Google
               </button>
@@ -106,7 +110,8 @@ export function LoginCard() {
               <div className="text-center mt-3">
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-blue-600 hover:underline">
+                  className="text-sm text-blue-600 hover:underline"
+                >
                   Forgot password?
                 </Link>
               </div>

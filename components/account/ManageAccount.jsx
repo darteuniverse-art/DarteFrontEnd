@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 
 export default function ManageAccount() {
   const { data: session } = useSession();
@@ -47,7 +47,9 @@ export default function ManageAccount() {
 
   // -------- HANDLE DELETE --------
   const handleDeleteAccount = async () => {
-    const confirmDelete = confirm("Are you sure you want to delete your account?");
+    const confirmDelete = confirm(
+      "Are you sure you want to delete your account?"
+    );
     if (!confirmDelete) return;
 
     await fetch("/api/account/delete", { method: "DELETE" });
@@ -56,7 +58,6 @@ export default function ManageAccount() {
 
   return (
     <div className="min-h-screen bg-[#f5f6f7] flex">
-
       {/* LEFT SIDEBAR */}
       <aside className="w-64 bg-white border-r border-gray-200 p-6">
         <h2 className="text-xs font-semibold text-gray-500 tracking-wider mb-3">
@@ -72,7 +73,6 @@ export default function ManageAccount() {
 
       {/* RIGHT AREA */}
       <main className="flex-1 p-10">
-
         <h1 className="text-3xl font-semibold text-gray-800">Manage Account</h1>
         <p className="text-gray-500 text-sm mt-1 mb-8">
           Update your profile information.
@@ -80,10 +80,8 @@ export default function ManageAccount() {
 
         {/* MAIN CARD */}
         <div className="bg-white border border-gray-200 rounded-xl p-8 max-w-3xl">
-
           {/* TOP: IMAGE + NAME */}
           <div className="flex items-start gap-8">
-            
             {/* PROFILE IMAGE */}
             <div className="flex flex-col items-center">
               <Image
@@ -107,7 +105,9 @@ export default function ManageAccount() {
 
             {/* NAME FIELD */}
             <div className="flex-1">
-              <label className="text-xs font-semibold text-gray-600">NAME</label>
+              <label className="text-xs font-semibold text-gray-600">
+                NAME
+              </label>
               <input
                 type="text"
                 className="w-full border border-gray-300 rounded-md mt-1 px-3 py-2 bg-white
@@ -116,12 +116,13 @@ export default function ManageAccount() {
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
-
           </div>
 
           {/* EMAIL (READ ONLY) */}
           <div className="mt-6">
-            <label className="text-xs font-semibold text-gray-600">EMAIL (Read-only)</label>
+            <label className="text-xs font-semibold text-gray-600">
+              EMAIL (Read-only)
+            </label>
             <input
               type="email"
               className="w-full border border-gray-300 rounded-md mt-1 px-3 py-2 bg-gray-100 text-gray-500 cursor-not-allowed"
@@ -132,7 +133,9 @@ export default function ManageAccount() {
 
           {/* PASSWORD */}
           <div className="mt-6">
-            <label className="text-xs font-semibold text-gray-600">NEW PASSWORD</label>
+            <label className="text-xs font-semibold text-gray-600">
+              NEW PASSWORD
+            </label>
             <input
               type="password"
               className="w-full border border-gray-300 rounded-md mt-1 px-3 py-2 bg-white
@@ -145,7 +148,6 @@ export default function ManageAccount() {
 
           {/* BUTTONS SIDE BY SIDE */}
           <div className="mt-10 flex gap-4">
-
             <button
               onClick={handleSaveChanges}
               className="flex-1 bg-green-500 hover:bg-green-400 text-gray-800 py-3 rounded-lg font-medium transition"
@@ -159,9 +161,7 @@ export default function ManageAccount() {
             >
               Delete Account
             </button>
-
           </div>
-
         </div>
       </main>
     </div>

@@ -1,15 +1,17 @@
-'use client'
+"use client";
 
 import { Search, ShoppingCart, Settings, Package, LogOut } from "lucide-react";
-import Link from "next/link";
+import React from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useSession, signOut } from "next-auth/react";
+import Logo from "./Logo";
+import Link from "next/link";
 
 const Navbar = () => {
   const router = useRouter();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [showName, setShowName] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
 
@@ -28,28 +30,21 @@ const Navbar = () => {
 
   if (status === "loading") {
     return (
-      <nav className="relative bg-white">
+      <nav className="relative dark:bg-gray-900 bg-white">
         <div className="mx-6 py-4 text-center text-slate-600">Loading...</div>
       </nav>
     );
   }
 
   return (
-    <nav className="relative bg-white">
+    <nav className="relative dark:bg-gray-900 bg-white">
       <div className="mx-6">
         <div className="flex items-center justify-between max-w-7xl mx-auto py-4 transition-all">
-
           {/* Logo */}
-          <Link href="/" className="relative text-4xl font-semibold text-slate-700">
-            <span className="text-green-600">D</span>arté
-            <span className="text-green-600 text-5xl leading-0">.</span>
-            <p className="absolute text-xs font-semibold -top-1 -right-8 px-3 p-0.5 rounded-full flex items-center gap-2 text-white bg-green-500">
-              plus
-            </p>
-          </Link>
+          <Logo />
 
           {/* Desktop Menu */}
-          <div className="hidden sm:flex items-center gap-4 lg:gap-8 text-slate-600">
+          <div className="hidden sm:flex items-center gap-4 lg:gap-8 dark:text-white text-slate-600">
             <Link href="/">Home</Link>
             <Link href="/shop">Shop</Link>
             <Link href="/about">About</Link>
@@ -58,11 +53,11 @@ const Navbar = () => {
             {/* Search Bar */}
             <form
               onSubmit={handleSearch}
-              className="hidden xl:flex items-center w-xs text-sm gap-2 bg-slate-100 px-4 py-3 rounded-full"
+              className="hidden xl:flex items-center w-xs text-sm gap-2 dark:bg-slate-50 bg-slate-100 px-4 py-3 rounded-full"
             >
               <Search size={18} className="text-slate-600" />
               <input
-                className="w-full bg-transparent outline-none placeholder-slate-600"
+                className="w-full bg-transparent outline-none dark:text-slate-600 text-slate-600 placeholder-slate-600"
                 type="text"
                 placeholder="Search products"
                 value={search}
@@ -72,10 +67,13 @@ const Navbar = () => {
             </form>
 
             {/* Cart */}
-            <Link href="/cart" className="relative flex items-center gap-2 text-slate-600">
+            <Link
+              href="/cart"
+              className="relative flex items-center gap-2 dark:text-white text-slate-600"
+            >
               <ShoppingCart size={18} />
               Cart
-              <span className="absolute -top-1 left-3 text-[8px] text-white bg-slate-600 size-3.5 rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 left-3 text-[8px] text-white bg-green-500 size-3.5 rounded-full flex items-center justify-center">
                 {cartCount}
               </span>
             </Link>
@@ -90,7 +88,6 @@ const Navbar = () => {
               </button>
             ) : (
               <div className="relative">
-                
                 {/* Profile Image */}
                 <img
                   src={session.user?.image || "/default-avatar.png"}
@@ -110,9 +107,7 @@ const Navbar = () => {
 
                 {/* Dropdown Menu */}
                 {openMenu && (
-                  <div
-                    className="absolute top-14 right-0 w-64 bg-white shadow-lg rounded-xl border border-gray-200 py-3 z-50"
-                  >
+                  <div className="absolute top-14 right-0 w-64 bg-white shadow-lg rounded-xl border border-gray-200 py-3 z-50">
                     {/* User Info */}
                     <div className="flex items-center gap-3 px-4 py-3">
                       <img
@@ -120,12 +115,16 @@ const Navbar = () => {
                         className="w-12 h-12 rounded-full"
                       />
                       <div>
-                        <p className="text-sm font-semibold">{session.user?.name}</p>
-                        <p className="text-xs text-gray-500">{session.user?.email}</p>
+                        <p className="text-sm font-semibold">
+                          {session.user?.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {session.user?.email}
+                        </p>
                       </div>
                     </div>
 
-                    <hr className="my-2 border-gray-200" />
+                    <hr className="my-2 dark:border-gray-700 border-gray-200" />
 
                     {/* Manage Account */}
                     <button
@@ -138,7 +137,7 @@ const Navbar = () => {
                       <Settings size={16} /> Manage Account
                     </button>
 
-                    <hr className="border-gray-200" />
+                    <hr className="border-gray-200 dark:border-gray-700" />
 
                     {/* Orders */}
                     <button
@@ -151,7 +150,7 @@ const Navbar = () => {
                       <Package size={16} /> My Orders
                     </button>
 
-                    <hr className="border-gray-200" />
+                    <hr className="border-gray-200 dark:border-gray-700" />
 
                     {/* Sign Out */}
                     <button
@@ -187,7 +186,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      <hr className="border-gray-300" />
+      <hr className="border-gray-300 dark:border-gray-700" />
     </nav>
   );
 };
