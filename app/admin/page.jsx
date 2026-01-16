@@ -49,37 +49,41 @@ export default function AdminDashboard() {
   if (loading) return <Loading />;
 
   return (
-    <div className="text-slate-500 dark:text-slate-400">
-      <h1 className="text-2xl">
+    <div className="text-slate-500 dark:text-slate-400 w-full">
+      <h1 className="text-2xl md:text-3xl font-bold">
         Admin{" "}
         <span className="text-slate-800 dark:text-white font-medium">
           Dashboard
         </span>
       </h1>
 
-      {/* Cards */}
-      <div className="flex flex-wrap gap-5 my-10 mt-4">
+      {/* Responsive Grid Layout: 1 col mobile, 2 cols tablet, 4 cols desktop */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 my-8">
         {dashboardCardsData.map((card, index) => (
           <div
             key={index}
-            className="flex items-center gap-10 border border-slate-200 dark:border-slate-700 p-3 px-6 rounded-lg"
+            className="flex items-center justify-between p-5 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm bg-white dark:bg-transparent"
           >
-            <div className="flex flex-col gap-3 text-xs">
-              <p>{card.title}</p>
-              <b className="text-2xl font-medium text-slate-700 dark:text-white">
+            <div className="flex flex-col gap-2">
+              <p className="text-xs font-medium uppercase tracking-wide">
+                {card.title}
+              </p>
+              <b className="text-xl md:text-2xl font-semibold text-slate-700 dark:text-white">
                 {card.value}
               </b>
             </div>
             <card.icon
-              size={50}
-              className=" w-11 h-11 p-2.5 text-slate-400 bg-slate-100 dark:bg-slate-700 dark:text-slate-200 rounded-full"
+              size={45}
+              className="p-2.5 text-slate-400 bg-slate-100 dark:bg-slate-800 dark:text-slate-200 rounded-full shrink-0"
             />
           </div>
         ))}
       </div>
 
-      {/* Area Chart */}
-      <OrdersAreaChart allOrders={dashboardData.allOrders} />
+      {/* Chart Container - Ensures chart doesn't overflow on small screens */}
+      <div className="w-full overflow-hidden bg-white dark:bg-transparent rounded-lg border border-slate-200 dark:border-slate-700 p-4">
+        <OrdersAreaChart allOrders={dashboardData.allOrders} />
+      </div>
     </div>
   );
 }

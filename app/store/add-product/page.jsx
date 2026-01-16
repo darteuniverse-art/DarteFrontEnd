@@ -42,23 +42,26 @@ export default function StoreAddProduct() {
       onSubmit={(e) =>
         toast.promise(onSubmitHandler(e), { loading: "Adding Product..." })
       }
-      className="text-slate-500 dark:text-slate-400 mb-28"
+      className="text-slate-500 dark:text-slate-400 mb-28 w-full pb-10"
     >
-      <h1 className="text-2xl">
+      <h1 className="text-2xl md:text-3xl font-bold">
         Add New{" "}
         <span className="text-slate-800 dark:text-white font-medium">
           Products
         </span>
       </h1>
-      <p className="mt-7">Product Images</p>
+      <p className="mt-6 text-base font-medium text-slate-700 dark:text-white">
+        Product Images
+      </p>
 
-      <div htmlFor="" className="flex gap-3 mt-4">
+      {/* Responsive Grid: 2 columns on mobile, 4 columns on larger screens */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3 max-w-2xl">
         {Object.keys(images).map((key) => (
-          <label key={key} htmlFor={`images${key}`}>
+          <label key={key} htmlFor={`images${key}`} className="cursor-pointer">
             <Image
               width={300}
               height={300}
-              className="h-15 w-auto border border-slate-200 dark:border-slate-700 rounded cursor-pointer"
+              className="w-full aspect-square object-cover border border-slate-200 dark:border-slate-700 rounded hover:border-slate-400 dark:hover:border-slate-500 transition-colors"
               src={
                 images[key]
                   ? URL.createObjectURL(images[key])
@@ -79,82 +82,92 @@ export default function StoreAddProduct() {
         ))}
       </div>
 
-      <label htmlFor="" className="flex flex-col gap-2 my-6 ">
-        Name
+      <label className="flex flex-col gap-2 mt-6 max-w-lg">
+        <span className="text-base font-medium text-slate-700 dark:text-white">
+          Name
+        </span>
         <input
           type="text"
           name="name"
           onChange={onChangeHandler}
           value={productInfo.name}
           placeholder="Enter product name"
-          className="w-full max-w-sm p-2 px-4 outline-none border border-slate-200 dark:border-slate-700 rounded"
+          className="w-full p-2.5 px-4 outline-none border border-slate-200 dark:border-slate-700 rounded focus:ring-2 focus:ring-slate-500 dark:bg-transparent"
           required
         />
       </label>
 
-      <label htmlFor="" className="flex flex-col gap-2 my-6 ">
-        Description
+      <label className="flex flex-col gap-2 mt-6 max-w-lg">
+        <span className="text-base font-medium text-slate-700 dark:text-white">
+          Description
+        </span>
         <textarea
           name="description"
           onChange={onChangeHandler}
           value={productInfo.description}
           placeholder="Enter product description"
           rows={5}
-          className="w-full max-w-sm p-2 px-4 outline-none border border-slate-200 dark:border-slate-700 rounded resize-none"
+          className="w-full p-2.5 px-4 outline-none border border-slate-200 dark:border-slate-700 rounded resize-none focus:ring-2 focus:ring-slate-500 dark:bg-transparent"
           required
         />
       </label>
 
-      <div className="flex gap-5">
-        <label htmlFor="" className="flex flex-col gap-2 ">
-          Actual Price (₦)
+      {/* Responsive Grid for Prices: Stack on mobile, side-by-side on tablet/desktop */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 max-w-lg">
+        <label className="flex flex-col gap-2">
+          <span className="text-base font-medium text-slate-700 dark:text-white">
+            Actual Price (₦)
+          </span>
           <input
             type="number"
             name="mrp"
             onChange={onChangeHandler}
             value={productInfo.mrp}
             placeholder="0"
-            rows={5}
-            className="w-full max-w-45 p-2 px-4 outline-none border border-slate-200 dark:border-slate-700 rounded resize-none"
+            className="w-full p-2.5 px-4 outline-none border border-slate-200 dark:border-slate-700 rounded focus:ring-2 focus:ring-slate-500 dark:bg-transparent"
             required
           />
         </label>
-        <label htmlFor="" className="flex flex-col gap-2 ">
-          Offer Price (₦)
+        <label className="flex flex-col gap-2">
+          <span className="text-base font-medium text-slate-700 dark:text-white">
+            Offer Price (₦)
+          </span>
           <input
             type="number"
             name="price"
             onChange={onChangeHandler}
             value={productInfo.price}
             placeholder="0"
-            rows={5}
-            className="w-full max-w-45 p-2 px-4 outline-none border border-slate-200 dark:border-slate-700 rounded resize-none"
+            className="w-full p-2.5 px-4 outline-none border border-slate-200 dark:border-slate-700 rounded focus:ring-2 focus:ring-slate-500 dark:bg-transparent"
             required
           />
         </label>
       </div>
 
-      <select
-        onChange={(e) =>
-          setProductInfo({ ...productInfo, category: e.target.value })
-        }
-        value={productInfo.category}
-        className="w-full max-w-sm p-2 px-4 my-6 outline-none border border-slate-200 dark:border-slate-700 rounded"
-        required
-      >
-        <option value="">Select a category</option>
-        {categories.map((category) => (
-          <option key={category} value={category}>
-            {category}
-          </option>
-        ))}
-      </select>
-
-      <br />
+      <label className="flex flex-col gap-2 mt-6 max-w-lg">
+        <span className="text-base font-medium text-slate-700 dark:text-white">
+          Category
+        </span>
+        <select
+          onChange={(e) =>
+            setProductInfo({ ...productInfo, category: e.target.value })
+          }
+          value={productInfo.category}
+          className="w-full p-2.5 px-4 outline-none border border-slate-200 dark:border-slate-700 rounded focus:ring-2 focus:ring-slate-500 dark:bg-slate-900 cursor-pointer"
+          required
+        >
+          <option value="">Select a category</option>
+          {categories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+      </label>
 
       <button
         disabled={loading}
-        className="bg-slate-800 text-white px-6 mt-7 py-2 hover:bg-slate-900 dark:hover:bg-slate-700 rounded transition"
+        className="w-full sm:w-auto bg-slate-800 text-white px-10 py-3 mt-6 hover:bg-slate-900 dark:hover:bg-slate-700 rounded transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Add Product
       </button>

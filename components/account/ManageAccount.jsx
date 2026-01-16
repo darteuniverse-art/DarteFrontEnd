@@ -12,19 +12,36 @@ export default function ManageAccount() {
   const [name, setName] = useState(session?.user?.name || "");
   const [password, setPassword] = useState("");
   const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview] = useState(
+    session?.user?.image || "/default-avatar.png"
+  );
+
+  // Handle local image preview
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImageFile(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
 
   if (!session) {
     return (
-      <div className="p-10 text-center">
-        <p className="text-xl font-semibold text-gray-600">
-          You must be logged in to manage your account.
-        </p>
-        <button
-          onClick={() => router.push("/login")}
-          className="mt-4 px-6 py-2 bg-neutral-300 text-gray-800 rounded-lg"
-        >
-          Go to Login
-        </button>
+      <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-slate-900">
+        <div className="text-center">
+          <p className="text-lg font-medium text-gray-900 dark:text-gray-100">
+            Authentication required
+          </p>
+          <p className="text-sm text-gray-500 mb-6">
+            Please log in to view this page.
+          </p>
+          <button
+            onClick={() => router.push("/login")}
+            className="px-5 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white text-sm font-medium rounded-md transition-colors"
+          >
+            Go to Login
+          </button>
+        </div>
       </div>
     );
   }
@@ -36,19 +53,22 @@ export default function ManageAccount() {
     formData.append("password", password);
     if (imageFile) formData.append("image", imageFile);
 
-    await fetch("/api/account/update", {
-      method: "POST",
-      body: formData,
-    });
-
-    router.refresh();
-    alert("Account updated successfully.");
+    try {
+      await fetch("/api/account/update", {
+        method: "POST",
+        body: formData,
+      });
+      router.refresh();
+      alert("Profile updated.");
+    } catch (error) {
+      console.error("Failed to update profile", error);
+    }
   };
 
   // -------- HANDLE DELETE --------
   const handleDeleteAccount = async () => {
     const confirmDelete = confirm(
-      "Are you sure you want to delete your account?"
+      "This action cannot be undone. Are you sure you want to permanently delete your account?"
     );
     if (!confirmDelete) return;
 
@@ -57,112 +77,153 @@ export default function ManageAccount() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f6f7] flex">
+    <div className="min-h-screen flex flex-col lg:flex-row ">
       {/* LEFT SIDEBAR */}
-      <aside className="w-64 bg-white border-r border-gray-200 p-6">
-        <h2 className="text-xs font-semibold text-gray-500 tracking-wider mb-3">
-          ACCOUNT SETTINGS
-        </h2>
-
-        <div>
-          <div className="px-4 py-2 bg-gray-100 rounded-md font-medium text-gray-800">
-            Manage Account
-          </div>
+      <aside className="w-full lg:w-64 border-b lg:border-b-0 lg:border-r border-gray-100 dark:border-slate-700 px-6 py-8 lg:py-10">
+        <div className="lg:fixed lg:w-52">
+          <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-6">
+            Settings
+          </h2>
+          <nav className="space-y-1">
+            <button className="w-full text-left px-3 py-2 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-gray-100 text-sm font-medium rounded-md">
+              General
+            </button>
+            <button className="w-full text-left px-3 py-2 text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-300 text-sm font-medium transition-colors">
+              Notifications
+            </button>
+            <button className="w-full text-left px-3 py-2 text-gray-500 dark:text-slate-500 hover:text-gray-900 dark:hover:text-gray-300 text-sm font-medium transition-colors">
+              Billing
+            </button>
+          </nav>
         </div>
       </aside>
 
       {/* RIGHT AREA */}
-      <main className="flex-1 p-10">
-        <h1 className="text-3xl font-semibold text-gray-800">Manage Account</h1>
-        <p className="text-gray-500 text-sm mt-1 mb-8">
-          Update your profile information.
-        </p>
+      <main className="flex-1 px-6 py-8 lg:px-12 lg:py-10 max-w-4xl">
+        <div className="mb-10">
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+            General Settings
+          </h1>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
+            Manage your account details and profile information.
+          </p>
+        </div>
 
-        {/* MAIN CARD */}
-        <div className="bg-white border border-gray-200 rounded-xl p-8 max-w-3xl">
-          {/* TOP: IMAGE + NAME */}
-          <div className="flex items-start gap-8">
-            {/* PROFILE IMAGE */}
-            <div className="flex flex-col items-center">
+        {/* SECTION 1: AVATAR */}
+        <section className="mb-10 border-b border-gray-100 dark:border-slate-900 pb-10">
+          <div className="flex items-center gap-6">
+            <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border border-gray-200 dark:border-slate-800">
               <Image
-                src={session.user?.image || "/default-avatar.png"}
-                width={95}
-                height={95}
+                src={preview}
+                fill
+                style={{ objectFit: "cover" }}
                 alt="Profile"
-                className="rounded-full border shadow-sm"
               />
-
-              <label className="mt-3 text-neutral-700 text-sm font-medium cursor-pointer hover:underline">
-                Change Profile Picture
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-200">
+                Profile Photo
+              </h3>
+              <p className="text-xs text-gray-500 dark:text-slate-500 mb-3">
+                Max file size 5MB.
+              </p>
+              <label className="inline-flex cursor-pointer rounded-md bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 px-3 py-1.5 text-xs font-semibold text-gray-900 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-800 transition">
+                Select New Image
                 <input
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => setImageFile(e.target.files[0])}
+                  onChange={handleImageChange}
                 />
               </label>
             </div>
+          </div>
+        </section>
 
-            {/* NAME FIELD */}
-            <div className="flex-1">
-              <label className="text-xs font-semibold text-gray-600">
-                NAME
-              </label>
+        {/* SECTION 2: FORM */}
+        <section className="space-y-6 max-w-lg">
+          {/* Name */}
+          <div>
+            <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-200">
+              Display Name
+            </label>
+            <div className="mt-2">
               <input
                 type="text"
-                className="w-full border border-gray-300 rounded-md mt-1 px-3 py-2 bg-white
-                  focus:border-neutral-500 outline-none"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                className="block w-full rounded-md border-0 p-2 text-gray-900 dark:text-white dark:bg-slate-900 shadow-sm ring-1 ring-inset ring-gray-200 dark:ring-slate-800 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-neutral-900 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
 
-          {/* EMAIL (READ ONLY) */}
-          <div className="mt-6">
-            <label className="text-xs font-semibold text-gray-600">
-              EMAIL (Read-only)
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-200">
+              Email Address
             </label>
-            <input
-              type="email"
-              className="w-full border border-gray-300 rounded-md mt-1 px-3 py-2 bg-gray-100 text-gray-500 cursor-not-allowed"
-              value={session.user?.email}
-              disabled
-            />
+            <div className="mt-2">
+              <input
+                type="email"
+                value={session.user?.email || ""}
+                disabled
+                className="block w-full rounded-md border-0 p-2 text-gray-500 dark:text-slate-500 dark:bg-slate-900/50 shadow-sm ring-1 ring-inset ring-gray-200 dark:ring-slate-800 bg-gray-50 sm:text-sm sm:leading-6 cursor-not-allowed"
+              />
+            </div>
+            <p className="mt-1 text-xs text-gray-500 dark:text-slate-500">
+              Email address cannot be changed.
+            </p>
           </div>
 
-          {/* PASSWORD */}
-          <div className="mt-6">
-            <label className="text-xs font-semibold text-gray-600">
-              NEW PASSWORD
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-200">
+              New Password
             </label>
-            <input
-              type="password"
-              className="w-full border border-gray-300 rounded-md mt-1 px-3 py-2 bg-white
-                focus:border-neutral-500 outline-none"
-              placeholder="Enter new password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="mt-2">
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="block w-full rounded-md border-0 p-2 text-gray-900 dark:text-white dark:bg-slate-900 shadow-sm ring-1 ring-inset ring-gray-200 dark:ring-slate-800 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-neutral-900 sm:text-sm sm:leading-6"
+              />
+            </div>
           </div>
 
-          {/* BUTTONS SIDE BY SIDE */}
-          <div className="mt-10 flex gap-4">
+          <div className="pt-4">
             <button
               onClick={handleSaveChanges}
-              className="flex-1 bg-green-500 hover:bg-green-400 text-gray-800 py-3 rounded-lg font-medium transition"
+              className="rounded-md bg-neutral-900 px-8 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-gray-200  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black transition-all"
             >
               Save Changes
             </button>
-
-            <button
-              onClick={handleDeleteAccount}
-              className="flex-1 bg-neutral-200 hover:bg-neutral-300 text-gray-700 py-3 rounded-lg font-medium transition"
-            >
-              Delete Account
-            </button>
           </div>
-        </div>
+        </section>
+
+        {/* SECTION 3: DANGER ZONE */}
+        <section className="mt-20 pt-10 border-t border-gray-100 dark:border-slate-900">
+          <div className="rounded-lg border border-red-100 bg-red-50/30 p-6 dark:border-red-900/30 dark:bg-red-900/10">
+            <h3 className="text-sm font-semibold text-red-700 dark:text-red-400">
+              Delete Account
+            </h3>
+            <div className="mt-2 max-w-xl text-sm text-red-600/80 dark:text-red-300/70">
+              <p>
+                Once you delete your account, there is no going back. Please be
+                certain.
+              </p>
+            </div>
+            <div className="mt-5">
+              <button
+                type="button"
+                onClick={handleDeleteAccount}
+                className="rounded-md bg-white px-3.5 py-2 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-red-200 hover:bg-red-50 dark:bg-transparent dark:ring-red-900 dark:hover:bg-red-950/30 transition-colors"
+              >
+                Delete your account
+              </button>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   );

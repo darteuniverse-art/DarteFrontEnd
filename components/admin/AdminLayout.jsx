@@ -9,6 +9,7 @@ import AdminSidebar from "./AdminSidebar";
 const AdminLayout = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const fetchIsAdmin = async () => {
     setIsAdmin(true);
@@ -23,9 +24,12 @@ const AdminLayout = ({ children }) => {
     <Loading />
   ) : isAdmin ? (
     <div className="flex flex-col h-screen">
-      <AdminNavbar />
+      <AdminNavbar onMenuClick={() => setIsSidebarOpen(true)} />
       <div className="flex flex-1 items-start h-full overflow-y-scroll no-scrollbar">
-        <AdminSidebar />
+        <AdminSidebar
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+        />
         <div className="flex-1 h-full p-5 lg:pl-12 lg:pt-12 overflow-y-scroll">
           {children}
         </div>

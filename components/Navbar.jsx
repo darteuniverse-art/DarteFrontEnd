@@ -1,19 +1,25 @@
 "use client";
 
-import { Search, ShoppingCart, Settings, Package, LogOut } from "lucide-react";
+import { Search, ShoppingCart, Menu } from "lucide-react";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useRef } from "react";
 import { useSelector } from "react-redux";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Logo from "./Logo";
 import Link from "next/link";
+import MobileMenuDrawer from "./MobileMenuDrawer";
+import UserProfileMenu from "./UserProfileMenu";
+import useClickOutside from "../hooks/useClickOutside";
 
 const Navbar = () => {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [showName, setShowName] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const profileMenuRef = useRef(null);
 
   const cartCount = useSelector((state) => state.cart.total);
   const { data: session, status } = useSession();
@@ -27,6 +33,13 @@ const Navbar = () => {
   const goToLogin = () => {
     router.push("/login");
   };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
+  // Close profile menu when clicking outside of the avatar/menu wrapper
+  useClickOutside(profileMenuRef, () => setOpenMenu(false), openMenu);
 
   if (status === "loading") {
     return (
@@ -44,7 +57,7 @@ const Navbar = () => {
           <Logo />
 
           {/* Desktop Menu */}
-          <div className="hidden sm:flex items-center gap-4 lg:gap-8 dark:text-white text-slate-600">
+          <div className="hidden lg:flex items-center gap-4 lg:gap-8 dark:text-white text-slate-600">
             <Link href="/">Home</Link>
             <Link href="/shop">Shop</Link>
             <Link href="/about">About</Link>
@@ -87,7 +100,7 @@ const Navbar = () => {
                 Login
               </button>
             ) : (
-              <div className="relative">
+              <div className="relative" ref={profileMenuRef}>
                 {/* Profile Image */}
                 <img
                   src={session.user?.image || "/default-avatar.png"}
@@ -106,87 +119,49 @@ const Navbar = () => {
                 )}
 
                 {/* Dropdown Menu */}
-                {openMenu && (
-                  <div className="absolute top-14 right-0 w-64 bg-white shadow-lg rounded-xl border border-gray-200 py-3 z-50">
-                    {/* User Info */}
-                    <div className="flex items-center gap-3 px-4 py-3">
-                      <img
-                        src={session.user?.image || "/default-avatar.png"}
-                        className="w-12 h-12 rounded-full"
-                      />
-                      <div>
-                        <p className="text-sm font-semibold">
-                          {session.user?.name}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {session.user?.email}
-                        </p>
-                      </div>
-                    </div>
-
-                    <hr className="my-2 dark:border-gray-700 border-gray-200" />
-
-                    {/* Manage Account */}
-                    <button
-                      onClick={() => {
-                        setOpenMenu(false);
-                        router.push("/account");
-                      }}
-                      className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-sm"
-                    >
-                      <Settings size={16} /> Manage Account
-                    </button>
-
-                    <hr className="border-gray-200 dark:border-gray-700" />
-
-                    {/* Orders */}
-                    <button
-                      onClick={() => {
-                        setOpenMenu(false);
-                        router.push("/orders");
-                      }}
-                      className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-sm"
-                    >
-                      <Package size={16} /> My Orders
-                    </button>
-
-                    <hr className="border-gray-200 dark:border-gray-700" />
-
-                    {/* Sign Out */}
-                    <button
-                      onClick={() => signOut({ callbackUrl: "/" })}
-                      className="w-full flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-sm text-red-600"
-                    >
-                      <LogOut size={16} /> Sign Out
-                    </button>
-                  </div>
-                )}
+                <UserProfileMenu
+                  session={session}
+                  isOpen={openMenu}
+                  onClose={() => setOpenMenu(false)}
+                />
               </div>
             )}
           </div>
 
           {/* Mobile */}
-          <div className="sm:hidden">
-            {!isLoggedIn ? (
-              <button
-                onClick={goToLogin}
-                className="px-7 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-sm transition text-white rounded-full"
-              >
-                Login
-              </button>
-            ) : (
-              <img
-                src={session.user?.image || "/default-avatar.png"}
-                alt="Profile"
-                className="w-9 h-9 rounded-full cursor-pointer"
-                onClick={() => signOut({ callbackUrl: "/" })}
+          <div className="lg:hidden flex items-center gap-3">
+            {/* Cart Icon */}
+            <Link href="/cart" className="relative">
+              <ShoppingCart
+                size={20}
+                className="dark:text-white text-slate-600"
               />
-            )}
+              <span className="absolute -top-1 -right-1 text-[8px] text-white bg-green-500 size-3.5 rounded-full flex items-center justify-center">
+                {cartCount}
+              </span>
+            </Link>
+
+            {/* Hamburger Menu */}
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="dark:text-white text-slate-600"
+            >
+              <Menu size={24} />
+            </button>
           </div>
         </div>
       </div>
 
       <hr className="border-gray-300 dark:border-gray-700" />
+
+      {/* Mobile Menu Drawer */}
+      <MobileMenuDrawer
+        isOpen={mobileMenuOpen}
+        onClose={closeMobileMenu}
+        isLoggedIn={isLoggedIn}
+        session={session}
+        cartCount={cartCount}
+      />
     </nav>
   );
 };

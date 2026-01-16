@@ -5,14 +5,12 @@ import Navbar from "../../components/Navbar"; // <-- adjust if your navbar path 
 
 export default function AccountLayout({ children }) {
   return (
-    <div className="min-h-screen bg-[#f7f8fa]">
+    <div className="min-h-screen">
       {/* GLOBAL NAVBAR */}
       <Navbar />
 
       {/* PAGE CONTAINER */}
-      <div className="pt-4">
-        {children}
-      </div>
+      <div className="">{children}</div>
     </div>
   );
 }
