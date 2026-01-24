@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { ArrowLeft, MoreVertical, Phone, Video } from "lucide-react";
 import Link from "next/link";
 import ChatMessage from "./ChatMessage"; // We will update this next
@@ -15,6 +15,7 @@ export default function ChatThread({
   onSend,
   onSendFile,
 }) {
+  const [inputValue, setInputValue] = useState("");
   const scrollRef = useRef(null);
 
   // Auto-scroll to bottom when new messages arrive
@@ -93,17 +94,15 @@ export default function ChatThread({
 
       {/* 4. INPUTS */}
       <MessageInputs
-        value=""
-        // Note: Logic for managing input state should ideally be here or passed down.
-        // For Redux integration, you might want to handle local state in MessageInputs
-        // and just fire onSend with the final text.
-        onSend={(text) => onSend(text)}
-        onSendFile={onSendFile}
-        onChange={(val) => {
-          // If you need parent to control input state, pass it here.
-          // Otherwise MessageInputs can handle its own state.
-          onSend(val);
+        value={inputValue}
+        onSend={() => {
+          if (inputValue.trim()) {
+            onSend(inputValue);
+            setInputValue("");
+          }
         }}
+        onSendFile={onSendFile}
+        onChange={setInputValue}
       />
     </div>
   );
